@@ -1,0 +1,33 @@
+version: "3.8"
+
+networks:
+  app-network:
+    driver: bridge
+
+services:
+  api:
+    build:
+      context: ./
+      cache_from:
+        - base-image:nx-base
+      dockerfile: ./apps/api/Dockerfile
+      args:
+        NODE_ENV: "development"
+        BUILD_FLAG: ""
+    image: api:nx-dev
+    ports:
+      - 4939:4939
+    environment:
+      DB_URL: "mongodb://db:27017"
+      NODE_ENV: "development"
+      PORT: 4939
+    networks:
+      - app-network
+    restart: on-failure
+
+  db:
+    image: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
